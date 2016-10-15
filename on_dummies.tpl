@@ -42,7 +42,7 @@ Concatenate these into a ``psychopathy`` vector:
     >>> psychopathy = np.concatenate((ucb_psycho, mit_psycho))
 
 We will use the general linear model to a two-level (UCB, MIT) single factor
-(student college) analysis of variance on these data.
+(college) analysis of variance on these data.
 
 Our model is that the Berkeley student data are drawn from some distribution
 with a mean value that is characteristic for Berkeley: $y_i = \mu_{Berkeley} +
@@ -68,7 +68,7 @@ group membership with dummy variables.  There is one dummy variable for each
 group.  The dummy variables are *indicator* variables, in that they have 1 in
 the row corresponding to observations in the group, and zero elsewhere.
 
-We will compile[ a design matrix $\Xmat$ and use the matrix formulation of the
+We will compile a design matrix $\Xmat$ and use the matrix formulation of the
 general linear model to do estimation and testing:
 
 .. math::
@@ -135,10 +135,10 @@ Calculate the inverse of $\Xmat^T \Xmat$.
 
 .. solution-start
 
-    Call the number of students in each group $q$.  The diagonals of $\Xmat^T
-    \Xmat$ are, for each column $\vec{w}$: $\sum_i {w_i^2}$, which reduces to
-    $q=5$, the number of ones in each column.  Because $\Xmat^T \Xmat$ is
-    diagonal, the inverse is:
+    Answer: call the number of students in each group $q$.  The diagonals of
+    $\Xmat^T \Xmat$ are, for each column $\vec{w}$: $\sum_i {w_i^2}$, which
+    reduces to $q=5$, the number of ones in each column.  Because $\Xmat^T
+    \Xmat$ is diagonal, the inverse is:
 
     .. math::
 
@@ -265,7 +265,7 @@ Our hypothesis is that the mean psychopathy score for MIT students,
 $\mu_{MIT}$, is higher than the mean psychopathy score for Berkeley students,
 $\mu_{Berkeley}$.  What contrast vector $\cvec$ do we need to apply to $\bhat$
 to express the difference between these means?  Apply this contrast vector to
-$\bhat$ to get the top half of the t statistic?
+$\bhat$ to get the top half of the t statistic.
 
 .. nbplot::
 
@@ -291,13 +291,13 @@ already.
     >>> fitted = X.dot(B)
     >>> residuals = Y - fitted
 
-Remember from `worked example of GLM` that we want an unbiased estimator for
+Remember from `worked example of GLM`_ that we want an unbiased estimator for
 $\sigma^2$, and therefore $\sigma$.  For the case of a single regressor, this
 involved dividing the sum of squares of the residuals by $n - 1$ where $n$ is
 the number of rows in the design.  Now we can generalize this $n - 1$ measure
 to designs with more than one column.  The general rule is that we divide the
-sum of squares by $n - m$ where $m$ is the number of *independent columns in
-the design matrix.  Specifically,* $m$ *is the `matrix rank`_ of the design* 
+sum of squares by $n - m$ where $m$ is the number of *independent* columns in
+the design matrix.  Specifically, $m$ is the `matrix rank`_ of the design
 $\Xmat$.  $m$ can also be called the *degrees of freedom* consumed by the
 design.*  $n - m$ *is the *degrees of freedom of the error*.
 
@@ -386,12 +386,13 @@ df_error degrees of freedom
 
     Now imagine your UCB and MIT are groups are not equal.  $n$ is constant,
     the number of students. Call $b$ the number of Berkeley students in the
-    $n=10$, where $b \in [1, 2, ... 9]$.  Write the number of MIT students ad
+    $n=10$, where $b \in [1, 2, ... 9]$.  Write the number of MIT students as
     $n - b$.  Using your answer above, derive a formula for the result of
-    $\cvec^T (\Xmat^T \Xmat)^{-1} \cvec$ in terms of $r$ and $n$. $\cvec$ is
+    $\cvec^T (\Xmat^T \Xmat)^{-1} \cvec$ in terms of $b$ and $n$. $\cvec$ is
     the contrast you chose above.  If all other things remain equal, such as
-    the $\hat{\sigma^2}$ and $\cvec^T \bvec$, then what value of $r$ should
-    you chose to give the largest value for your t statistic?
+    $n = 10$, the $\hat{\sigma^2}$ and $\cvec^T \bvec$, then which of the
+    possible values of $b$ should you chose to give the largest value for your
+    t statistic?
 
 .. solution-start
 
@@ -409,25 +410,34 @@ df_error degrees of freedom
 
     .. math::
 
-        \cvec^T (\Xmat^T \Xmat)^{-1} \cvec = \frac{1}{r} + \frac{1}{n-r}
+        \cvec^T (\Xmat^T \Xmat)^{-1} \cvec = \frac{1}{b} + \frac{1}{n-b}
 
     To investigate, we make a Python function returning the result for a given
-    ``r`` and ``n``, and evalulate for the possible values of ``r``:
+    ``b`` and ``n``, and evalulate for the possible values of ``b``:
 
     .. nbplot::
 
-        >>> def two_group_ct_ixtx_c(r, n):
-        ...    return 1. / r + 1 / (n - r)
+        >>> def two_group_ct_ixtx_c(b, n):
+        ...    return 1. / b + 1. / (n - b)
         ...
-        >>> two_group_ct_ixtx_c(np.arange(1, 9), 10)
+        >>> two_group_ct_ixtx_c(np.arange(1, 10), 10)
+        array([ 1.1111,  0.625 ,  0.4762,  0.4167,  0.4   ,  0.4167,  0.4762,
+                0.625 ,  1.1111])
+
+    We want $\cvec^T (\Xmat^T \Xmat)^{-1} \cvec$ to be small so that the t
+    value will be large.  So, all other things being equal, $b = 5$ will give
+    the largest t value.
+
+    In general, for a fixed $n$, we get the largest t statistic (and greatest
+    power) when comparing two groups of equal size.
 
 .. solution-replace-code
 
     """ Using your answer above, derive a formula for the result of
-    ``c.dot(npl.inv(X.T.dot(X)).dot(c)``.  in terms of ``r`` and ``n``. ``c``
+    ``c.dot(npl.inv(X.T.dot(X)).dot(c)``.  in terms of ``b`` and ``n``. ``c``
     is the contrast you chose above.  If all other things remain equal, such
     as the sigma estimate and the top half of the t statistic, then what value
-    of ``r`` should you chose to give the largest value for your t statistic?
+    of ``b`` should you chose to give the largest value for your t statistic?
     """
 
 .. solution-end
