@@ -1,0 +1,6 @@
+*_exercise.rst
+*_solution.rst
+*_code.py
+*.pyc
+__pycache__
+_build/
