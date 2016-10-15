@@ -221,6 +221,9 @@ CODE_SKELETON_FILES = $(TPL_FILES:.tpl=_code.rst)
 rst-exercises: on_dummies.tpl
 	$(PYTHON) tools/proc_rst.py on_dummies.tpl \
 		--solution-page=
+	$(PYTHON) tools/proc_rst.py on_dummies.tpl \
+		--exercise-page= \
+		--exercise-code=
 
 %.pdf : %.tex
 	pdflatex $<

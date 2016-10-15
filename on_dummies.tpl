@@ -331,12 +331,10 @@ pseudo-inverse.
     >>> c_iXtX_ct
     0.40000...
 
-For extra points:
-
 .. admonition:: Question
 
-    What is the relationship of $\cvec^T (\Xmat^T \Xmat)^{-1} \cvec$ to the
-    number of observations in each group?
+    What is the relationship of $\cvec^T (\Xmat^T \Xmat)^{-1} \cvec$ to $p$
+    |--| the number of observations in each group?
 
 .. solution-start
 
@@ -354,7 +352,63 @@ For extra points:
 
     .. math::
 
-        \cvec^T (\Xmat^T \Xmat)^{-1} \cvec = 
+        \cvec^T (\Xmat^T \Xmat)^{-1} \cvec = \frac{2}{p}
+
+.. solution-replace-code
+
+    """ What is the relationship of ``c.dot(npl.inv(X.T.dot(X)).dot(cvec)`` to
+    ``p`` - the number of observations in each group?
+    """
+
+.. solution-end
+
+.. admonition:: Question
+
+    Now imagine your UCB and MIT are groups are not equal.  $n$ is constant,
+    the number of students. Call $b$ the number of Berkeley students in the
+    $n=10$, where $b \in [1, 2, ... 9]$.  Write the number of MIT students ad
+    $n - b$.  Using your answer above, derive a formula for the result of
+    $\cvec^T (\Xmat^T \Xmat)^{-1} \cvec$ in terms of $r$ and $n$. $\cvec$ is
+    the contrast you chose above.  If all other things remain equal, such as
+    the $\hat{\sigma^2}$ and $\cvec^T \bvec$, then what value of $r$ should
+    you chose to give the largest value for your t statistic?
+
+.. solution-start
+
+    Answer: we now have:
+
+    .. math::
+
+        (\Xmat^T \Xmat)^{-1} =
+        \begin{bmatrix}
+        \frac{1}{r} 0 \\
+        0 \frac{1}{n-r} \\
+        \end{bmatrix}
+
+    With contrast $c = [-1, 1]$ we get:
+
+    .. math::
+
+        \cvec^T (\Xmat^T \Xmat)^{-1} \cvec = \frac{1}{r} + \frac{1}{n-r}
+
+    To investigate, we make a Python function returning the result for a given
+    ``r`` and ``n``, and evalulate for the possible values of ``r``:
+
+    .. nbplot::
+
+        >>> def two_group_ct_ixtx_c(r, n):
+        ...    return 1. / r + 1 / (n - r)
+        ...
+        >>> two_group_ct_ixtx_c(np.arange(1, 9), 10)
+
+.. solution-code-replace
+
+    """ Using your answer above, derive a formula for the result of
+    ``c.dot(npl.inv(X.T.dot(X)).dot(c)``.  in terms of ``r`` and ``n``. ``c``
+    is the contrast you chose above.  If all other things remain equal, such
+    as the sigma estimate and the top half of the t statistic, then what value
+    of ``r`` should you chose to give the largest value for your t statistic?
+    """
 
 .. solution-end
 
