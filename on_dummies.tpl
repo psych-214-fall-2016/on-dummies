@@ -295,10 +295,10 @@ $\sigma^2$, and therefore $\sigma$.  For the case of a single regressor, this
 involved dividing the sum of squares of the residuals by $n - 1$ where $n$ is
 the number of rows in the design.  Now we can generalize this $n - 1$ measure
 to designs with more than one column.  The general rule is that we divide the
-sum of squares by $n - m$ where $m$ is the number of *independent$ columns in
-the design matrix.  Specifically, $m$ is the `matrix rank`_ of the design
+sum of squares by $n - m$ where $m$ is the number of *independent columns in
+the design matrix.  Specifically,* $m$ *is the `matrix rank`_ of the design* 
 $\Xmat$.  $m$ can also be called the *degrees of freedom* consumed by the
-design.  $n - m$ is the *degrees of freedom of the error*.
+design.*  $n - m$ *is the *degrees of freedom of the error*.
 
 .. nbplot::
 
@@ -415,5 +415,5 @@ pseudo-inverse.
 .. rubric:: Footnotes
 
 .. [#col-vec] Assume the default that for any $\vec{v}$, $\vec{v}$ is a
-   column vector, and therefore that $\vec{v}^T$ is a column vector.
+   column vector, and therefore that $\vec{v}^T$ is a row vector.
 
