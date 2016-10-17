@@ -84,7 +84,8 @@ Create the design matrix for this ANOVA, with dummy variables corresponding to t
 .. nbplot::
 
     >>> #- Create design matrix for UCB / MIT ANOVA
-    >>> n = len(psychopathy)
+    >>> Y = psychopathy
+    >>> n = len(Y)
     >>> X = np.zeros((n, 2))
     >>> X[:5, 0] = 1  # UCB indicator
     >>> X[5:, 1] = 1  # MIT indicator
@@ -165,7 +166,7 @@ $\vec{p} = \Xmat^T \yvec$.
 .. nbplot::
 
     >>> #- Calculate transpose of design matrix multiplied by data
-    >>> XtY = X.T.dot(psychopathy)
+    >>> XtY = X.T.dot(Y)
 
 .. admonition:: Question
 
@@ -182,9 +183,9 @@ $\vec{p} = \Xmat^T \yvec$.
     >>> XtY
     array([ 42.5967,  59.6999])
     >>> # The apparent difference is just in the display of the numbers
-    >>> np.sum(psychopathy[:5])
+    >>> np.sum(Y[:5])
     42.5966999...
-    >>> np.sum(psychopathy[5:])
+    >>> np.sum(Y[5:])
     59.6999
 
 .. solution-replace-code
@@ -288,7 +289,7 @@ already.
 
     >>> #- Calculate the fitted and residual values
     >>> fitted = X.dot(B)
-    >>> residuals = psychopathy - fitted
+    >>> residuals = Y - fitted
 
 Remember from `worked example of GLM` that we want an unbiased estimator for
 $\sigma^2$, and therefore $\sigma$.  For the case of a single regressor, this
@@ -362,6 +363,25 @@ pseudo-inverse.
 
 .. solution-end
 
+
+Now, what is our t-value ? 
+
+.. nbplot::
+
+    >>> tstat = top_of_t / np.sqrt(var_hat*c.T.dot(iXtX).dot(c))
+
+Is this significant ? use the stats model from scipy to create a t-distribution with 
+df_error degrees of freedom
+
+.. nbplot::
+
+    >>> import scipy.stats as sst
+    >>> tdistrib = sst.t(df_error)
+    >>> # 1 - cumulative density function (P(x <= t)
+    >>> 1. - tdistrib.cdf(tstat)
+    >>> # is the same as the "survival function"
+    >>> tdistrib.sf(tstat)
+ 
 .. admonition:: Question
 
     Now imagine your UCB and MIT are groups are not equal.  $n$ is constant,
@@ -401,7 +421,7 @@ pseudo-inverse.
         ...
         >>> two_group_ct_ixtx_c(np.arange(1, 9), 10)
 
-.. solution-code-replace
+.. solution-replace-code
 
     """ Using your answer above, derive a formula for the result of
     ``c.dot(npl.inv(X.T.dot(X)).dot(c)``.  in terms of ``r`` and ``n``. ``c``
@@ -439,24 +459,52 @@ To test whether the model containing two columns is better, we compute the diffe
 
 SSR here stands for "Sum of square of the residuals". 
 
-What are ${\nu_1, \nu_2}$?   ${\nu_2}$ we have already encountered. This is the degrees of freedom of the *error*, that we have seen is $n - 2$. What is  ${\nu_1}$ ? It's something related. You remember that the degree of freedom of the residuals (the one we used to estimate the variance of the error) is $n-m$ with $n$ the number of observations, and $m$ the number of linearly independent columns in the design (the number of things to estimate). Here, we are looking at the difference between two design, and this degrees of freedom will simply be this number $m$ minus the number of linearly independent columns in $X_0$, here 1. 
+What are ${\nu_1, \nu_2}$?   
 
+${\nu_2}$ we have already encountered. This is the degrees of freedom of the *error*, that we have seen is $n - 2$. 
+
+What is  ${\nu_1}$ ? It's something related. You remember that the degree of freedom of the residuals (the one we used to estimate the variance of the error) is $n-m$ with $n$ the number of observations, and $m$ the number of linearly independent columns in the design (the number of things to estimate). Here, we are looking at the difference between two designs, and this degrees of freedom will simply be this number $m$ minus the number of linearly independent columns in $X_0$. 
 
 
 .. admonition:: Question
 
     Make the alternative model $X_0$. Compute the degrees of freedom ${\nu_1}$. 
     Compute the extra sum of squares and the F statistics. How is it related to
-    the t-statistics that you had above ?
+    the t-statistics that you had above ? To investigate, create a little glm 
+    function that takes as input X (design)  and Y (data) and returns Beta, 
+    sum of square of the residuals, and degrees of freedom of the residuals.
     
 .. solution-start
 
     Answer: we already know that $\nu_2$ == n-m
 
-    You should get $\nu_1$ == 1: compute the rank of $X_0$ (this is one), rank of $X$
-    (this is 2), hence the numerator of the F statistics is 1. 
+    Compute the rank of $X_0$: 1, rank of $X$: 2
+    (this is 2), hence the numerator of the F statistics is $\nu_1$ == 2-1 == 1. 
+
     And the relation?  the F-statistics should be the square of the t-statistics.
         
+    .. nbplot::
+
+        >>> def glm(X,Y):
+        >>>     """
+        >>>     input: 
+        >>>       X: design matrix, n observations times p columns
+        >>>       Y: data (n,1)
+        >>>     returns beta, residual_var, df_residual_var
+        >>>     """
+        >>>     B = npl.pinv(X).dot(Y)
+        >>>     resid = Y - X.dot(B)
+        >>>     df = X.shape[0] - npl.matrix_rank(X)
+        >>>     return B, resid.T.dot(resid), df
+        >>> 
+
+        >>> X0 = X.dot([1, 1]).reshape(n,1) 
+        >>> b, rss, df = glm(X,Y)
+        >>> tstat = c.T.dot(b)/np.sqrt((rss/df)*c.T.dot(iXtX).dot(c))
+        >>> b0, rss0, df0 = glm(X0,Y)
+        >>> nu1 = m - npl.matrix_rank(X0)
+        >>> Fstat = ((rss0 - rss)/nu1)/(rss/df_error) 
+        >>> print(tstat, np.sqrt(Fstat))
 
 .. solution-replace-code
 
@@ -465,9 +513,6 @@ What are ${\nu_1, \nu_2}$?   ${\nu_2}$ we have already encountered. This is the 
     """
 
 .. solution-end
-
-
-
 
 
 
