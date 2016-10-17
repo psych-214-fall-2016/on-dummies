@@ -412,8 +412,80 @@ pseudo-inverse.
 
 .. solution-end
 
+
+*********************************
+Hypothesis testing: F-tests 
+*********************************
+
+
+T-test tests a linear combinaison of the $\beta$, they would test if the mean of the first group is greater than the mean of the second group ($\beta_1 - \beta_2$) or the opposite, but in any case these tests are *signed*. 
+
+In many instance, we do not know the direction of the test. Or we have to test the influence of several regressors on the data. In this cases, an F-test is more appropriate. 
+
+The simplest and generally most useful way of thinking of F test is to think as the test between two models: one which contains the regressor or factor that we want to test for (refered as the full model with design matrix $X$), and one which doesnt (the reduced model $X_0$). In the example above, what is our reduced model $X_0$ ?
+
+The *reduced* model is the model here is simply a model where there is no difference between the group means: only the mean of the data is modelled, so, one column of $n$ values. 
+
+
+To test whether the model containing two columns is better, we compute the difference between the estimation of the noise variance between the models (variance estimated with X versus variance estimated with X0), normalized by the estimation of the noise (residual) variance under the full model $X$. This is :
+
+    .. math::
+
+        \begin{eqnarray} 
+        F_{\nu_1, \nu_2} & = & \frac{(\hat\epsilon_0^t \hat\epsilon_0 - \hat\epsilon^T\hat\epsilon)/ \nu_{1} }{\hat\epsilon^T\hat\epsilon/\nu_{2}} \\ 
+        & = & \frac{(\textrm{SSR}(X_0) - \textrm{SSR}(X))/\nu_1}{\textrm{SSR}(X)/\nu_2}
+        \end{eqnarray}
+
+
+SSR here stands for "Sum of square of the residuals". 
+
+What are ${\nu_1, \nu_2}$?   ${\nu_2}$ we have already encountered. This is the degrees of freedom of the *error*, that we have seen is $n - 2$. What is  ${\nu_1}$ ? It's something related. You remember that the degree of freedom of the residuals (the one we used to estimate the variance of the error) is $n-m$ with $n$ the number of observations, and $m$ the number of linearly independent columns in the design (the number of things to estimate). Here, we are looking at the difference between two design, and this degrees of freedom will simply be this number $m$ minus the number of linearly independent columns in $X_0$, here 1. 
+
+
+
+.. admonition:: Question
+
+    Make the alternative model $X_0$. Compute the degrees of freedom ${\nu_1}$. 
+    Compute the extra sum of squares and the F statistics. How is it related to
+    the t-statistics that you had above ?
+    
+.. solution-start
+
+    Answer: we already know that $\nu_2$ == n-m
+
+    You should get $\nu_1$ == 1: compute the rank of $X_0$ (this is one), rank of $X$
+    (this is 2), hence the numerator of the F statistics is 1. 
+    And the relation?  the F-statistics should be the square of the t-statistics.
+        
+
+.. solution-replace-code
+
+    """ 
+    Some solution code here
+    """
+
+.. solution-end
+
+
+
+
+
+
 .. rubric:: Footnotes
 
 .. [#col-vec] Assume the default that for any $\vec{v}$, $\vec{v}$ is a
    column vector, and therefore that $\vec{v}^T$ is a row vector.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
