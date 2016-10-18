@@ -500,7 +500,7 @@ sum of squares of a residual vector:
 
 .. math::
 
-    \sum_{i=1}^n e_i \equiv \evec \cdot \evec \equiv \evec^T \evec
+    \sum_{i=1}^n e_i^2 \equiv \evec \cdot \evec \equiv \evec^T \evec
 
 Now define we define the $SSR(\Xmat_r)$ and $SSR(\Xmat_f)$.  These are the
 sums of squares of the residuals of the reduced and full model respectively.
@@ -515,7 +515,7 @@ sums of squares of the residuals of the reduced and full model respectively.
     \hat\evec_f = \yvec - \Xmat_f \bhat_f \\
     SSR(\Xmat_f) = \hat\evec_f^T \hat\evec_f
 
-$ESS = SSR(\Xmat_r) - SSR(\Xmat_f$ is the extra sum of squared residuals
+$ESS = SSR(\Xmat_r) - SSR(\Xmat_f)$ is the Extra Sum of Squared residuals
 explained by the full compared to the reduced model.  The top half of the
 ratio that forms the F statistic is $ESS / \nu_1$, where $\nu_1$ is the number
 of extra independent regressors (columns) in $\Xmat_f$ compared to $\Xmat_r$.
