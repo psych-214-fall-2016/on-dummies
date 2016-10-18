@@ -370,8 +370,9 @@ Now, what is our t-value ?
     >>> tstat = top_of_t / np.sqrt(var_hat*c.T.dot(iXtX).dot(c))
 
 Is this significant ? Use the ``stats`` module from ``scipy`` to create a
-t-distribution with ``df_error`` degrees of freedom.  See the ``t_stat``
-function in `introduction to the general linear model`_ for inspiration:
+t-distribution with ``df_error`` (degrees of freedom of the error).  See the
+``t_stat`` function in `introduction to the general linear model`_ for
+inspiration:
 
 .. nbplot::
 
@@ -393,7 +394,7 @@ function in `introduction to the general linear model`_ for inspiration:
     $n - b$.  Using your answer above, derive a formula for the result of
     $\cvec^T (\Xmat^T \Xmat)^{-1} \cvec$ in terms of $b$ and $n$. $\cvec$ is
     the contrast you chose above.  If all other things remain equal, such as
-    $n = 10$, the $\hat{\sigma^2}$ and $\cvec^T \bvec$, then which of the
+    $n = 10$, the $\hat{\sigma^2}$ and $\cvec^T \bhat$, then which of the
     possible values of $b$ should you chose to give the largest value for your
     t statistic?
 
@@ -405,8 +406,8 @@ function in `introduction to the general linear model`_ for inspiration:
 
         (\Xmat^T \Xmat)^{-1} =
         \begin{bmatrix}
-        \frac{1}{r} 0 \\
-        0 \frac{1}{n-r} \\
+        \frac{1}{b} 0 \\
+        0 \frac{1}{n-b} \\
         \end{bmatrix}
 
     With contrast $c = [-1, 1]$ we get:
@@ -466,10 +467,10 @@ whether the clammy score is associated with an *increase* of the psychopathy
 score, or a *decrease*, but we can't simultaneously test for either an
 increase or decrease.  We can use an F test to do that.
 
-The simplest and generally most useful way of thinking of F test is to think
-as the test between two models: a *full model* and a *reduced model*.  The
-full model contains the regressor or factor that we want to test for.  We will
-use $\Xmat_f$ for the full model.  The reduced model is a model that does not
+The simplest and generally most useful way of thinking of F test is as a test
+comparing two models: a *full model* and a *reduced model*.  The full model
+contains the regressor or factor that we want to test for.  We will use
+$\Xmat_f$ for the full model.  The reduced model is a model that does not
 contain the effect we want to test for, but does contain all other effects in
 the full model.  We will use $\Xmat_r$ for the reduced model.
 
@@ -502,8 +503,8 @@ sum of squares of a residual vector:
 
     \sum_{i=1}^n e_i^2 \equiv \evec \cdot \evec \equiv \evec^T \evec
 
-Now define we define the $SSR(\Xmat_r)$ and $SSR(\Xmat_f)$.  These are the
-sums of squares of the residuals of the reduced and full model respectively.
+Now we define the $SSR(\Xmat_r)$ and $SSR(\Xmat_f)$.  These are the Sums of
+Squares of the Residuals of the reduced and full model respectively.
 
 .. math::
 
@@ -547,14 +548,31 @@ $SSR(\Xmat_f) / \nu_2$ where $\nu_2$ is the *degrees of freedom of the error*:
 .. admonition:: Question
 
     Make the alternative full model $\Xmat_f$. Compute the extra degrees of
-    freedom ${\nu_1}$.  Compute the extra sum of squares and the F statistic.
+    freedom consumed by the design |--| ${\nu_1}$.  Compute the extra sum of
+    squares and the F statistic.
 
 .. solution-start
 
-    Answer: we already know that $\nu_2$ == n - m
+    Answer: Construct $\Xmat_f$; compute $\nu_1$:
 
-    Compute the rank of $\Xmat_r$: 2, rank of $\Xmat_f$: 2 (this is 2), hence
-    the numerator of the F statistic is $\nu_1$ == 2 - 1 == 1.
+    .. nbplot::
+
+        >>> # Reduced design, and design rank
+        >>> X_r = X
+        >>> rank_r = npl.matrix_rank(X_r)
+        >>> rank_r
+        2
+        >>> # Full design, and matrix rank
+        >>> X_f = np.column_stack((clammy, X))
+        >>> rank_f = npl.matrix_rank(X_f)
+        >>> rank_f
+        3
+        >>> nu_1 = rank_f - rank_r
+        >>> nu_1
+        1
+
+    Make a function to compute $\bhat, \textrm{SSR}(\Xmat), \nu_2$ for a
+    given $\Xmat$ and $\yvec$:
 
     .. nbplot::
 
@@ -573,7 +591,7 @@ $SSR(\Xmat_f) / \nu_2$ where $\nu_2$ is the *degrees of freedom of the error*:
         ...     beta : ndarray shape (p,)
         ...        estimated parameters for model `X`
         ...     residual_ss : float
-        ...        sum of squares of residual
+        ...        sum of squares of residuals
         ...     df_error : float
         ...         Degrees of freedom due to error.
         ...     """
@@ -582,11 +600,12 @@ $SSR(\Xmat_f) / \nu_2$ where $\nu_2$ is the *degrees of freedom of the error*:
         ...     df = X.shape[0] - npl.matrix_rank(X)
         ...     return B, resid.T.dot(resid), df
 
-        >>> X_r = X
-        >>> X_f = np.column_stack((clammy, X))
+    Compute F statistic:
+
+    .. nbplot::
+
         >>> b_f, rss_f, df_f = glm(X_f, Y)
         >>> b_r, rss_r, df_r = glm(X_r, Y)
-        >>> nu_1 = npl.matrix_rank(X_f) - npl.matrix_rank(X_r)
         >>> f_stat = ((rss_r - rss_f) / nu_1) / (rss_f / df_f)
         >>> f_stat
         6.15949...
