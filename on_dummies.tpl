@@ -144,8 +144,8 @@ Calculate the inverse of $\Xmat^T \Xmat$.
 
         (\Xmat^T \Xmat)^{-1} =
         \begin{bmatrix}
-        \frac{1}{p} 0 \\
-        0 \frac{1}{p} \\
+        \frac{1}{p} & 0 \\
+        0 & \frac{1}{p} \\
         \end{bmatrix}
 
     The diagonal values in $(\Xmat^T \Xmat)^{-1}$ are therefore the reciprocal
@@ -175,9 +175,9 @@ $\vec{p} = \Xmat^T \yvec$.
 
 .. solution-start
 
-    The dot product of the dummy variables resolves to the sum of the values
-    for which the dummy vector value is 1 (and therefore not 0). Therefore the
-    values are just the sums of the values in ``ucb_psycho`` and
+    Answer: The dot product of the dummy variables resolves to the sum of the
+    values for which the dummy vector value is 1 (and therefore not 0).
+    Therefore the values are the sums of the values in ``ucb_psycho`` and
     ``mit_psycho`` respectively:
 
     >>> XtY
@@ -291,15 +291,15 @@ already.
     >>> fitted = X.dot(B)
     >>> residuals = Y - fitted
 
-Remember from `worked example of GLM`_ that we want an unbiased estimator for
-$\sigma^2$, and therefore $\sigma$.  For the case of a single regressor, this
-involved dividing the sum of squares of the residuals by $n - 1$ where $n$ is
-the number of rows in the design.  Now we can generalize this $n - 1$ measure
-to designs with more than one column.  The general rule is that we divide the
-sum of squares by $n - m$ where $m$ is the number of *independent* columns in
-the design matrix.  Specifically, $m$ is the `matrix rank`_ of the design
-$\Xmat$.  $m$ can also be called the *degrees of freedom* consumed by the
-design.*  $n - m$ *is the *degrees of freedom of the error*.
+We want an unbiased variance estimate for $\hat\sigma^2$.  See the `worked
+example of GLM`_ page and the `unbiased variance estimate`_ section for
+details.
+
+The general rule is that we divide the sum of squares by $n - m$ where $m$ is
+the number of *independent* columns in the design matrix.  Specifically, $m$
+is the `matrix rank`_ of the design $\Xmat$.  $m$ can also be called the
+*degrees of freedom of the design*.  $n - m$ is the *degrees of freedom of the
+error* (see `unbiased variance estimate`_).
 
 .. nbplot::
 
@@ -345,8 +345,8 @@ pseudo-inverse.
 
         (\Xmat^T \Xmat)^{-1} =
         \begin{bmatrix}
-        \frac{1}{p} 0 \\
-        0 \frac{1}{p} \\
+        \frac{1}{p} & 0 \\
+        0 & \frac{1}{p} \\
         \end{bmatrix}
 
     With contrast $c = [-1, 1]$ we get:
@@ -368,6 +368,8 @@ Now, what is our t-value ?
 .. nbplot::
 
     >>> tstat = top_of_t / np.sqrt(var_hat*c.T.dot(iXtX).dot(c))
+    >>> tstat
+    1.49720...
 
 Is this significant ? Use the ``stats`` module from ``scipy`` to create a
 t-distribution with ``df_error`` (degrees of freedom of the error).  See the
@@ -391,12 +393,12 @@ inspiration:
     Now imagine your UCB and MIT are groups are not equal.  $n$ is constant,
     the number of students. Call $b$ the number of Berkeley students in the
     $n=10$, where $b \in [1, 2, ... 9]$.  Write the number of MIT students as
-    $n - b$.  Using your answer above, derive a formula for the result of
-    $\cvec^T (\Xmat^T \Xmat)^{-1} \cvec$ in terms of $b$ and $n$. $\cvec$ is
-    the contrast you chose above.  If all other things remain equal, such as
-    $n = 10$, the $\hat{\sigma^2}$ and $\cvec^T \bhat$, then which of the
-    possible values of $b$ should you chose to give the largest value for your
-    t statistic?
+    $n - b$.  Using your reasoning for the case of equal group sizes above,
+    derive a simple mathematical formula for the result of $\cvec^T (\Xmat^T
+    \Xmat)^{-1} \cvec$ in terms of $b$ and $n$. $\cvec$ is the contrast you
+    chose above.  If all other things remain equal, such as $n = 10$, the
+    $\hat{\sigma^2}$ and $\cvec^T \bhat$, then which of the possible values of
+    $b$ should you chose to give the largest value for your t statistic?
 
 .. solution-start
 
@@ -406,8 +408,8 @@ inspiration:
 
         (\Xmat^T \Xmat)^{-1} =
         \begin{bmatrix}
-        \frac{1}{b} 0 \\
-        0 \frac{1}{n-b} \\
+        \frac{1}{b} & 0 \\
+        0 & \frac{1}{n-b} \\
         \end{bmatrix}
 
     With contrast $c = [-1, 1]$ we get:
@@ -437,11 +439,16 @@ inspiration:
 
 .. solution-replace-code
 
-    """ Using your answer above, derive a formula for the result of
-    ``c.dot(npl.inv(X.T.dot(X)).dot(c)``.  in terms of ``b`` and ``n``. ``c``
-    is the contrast you chose above.  If all other things remain equal, such
-    as the sigma estimate and the top half of the t statistic, then what value
-    of ``b`` should you chose to give the largest value for your t statistic?
+    """ Now imagine your UCB and MIT are groups are not equal.  $n$ is
+    constant, the number of students. Call ``b`` the number of Berkeley
+    students in the ``n=10``, where ``b in range(1, 10)``.  Write the number
+    of MIT students as ``n - b``.  Using your reasoning from the  equal group
+    sizes above, derive a simple mathematical formula for the result of
+    ``c.dot(npl.inv(X.T.dot(X)).dot(c)`` in terms of ``b`` and ``n``. ``c`` is
+    the contrast vector you chose above.  If all other things remain equal,
+    such as the sigma estimate and the top half of the t statistic, then what
+    value of ``b`` should you chose to give the largest value for your t
+    statistic?
     """
 
 .. solution-end
@@ -462,7 +469,7 @@ students.
 We want to test whether the clammy score is useful in explaining
 the psychopathy data, over and above the students' college affiliation.
 
-To do this, we will use an :ref:`F test <f-tests>`.
+To do this, we will use an `F test <F tests_>`_.
 
 An F-test compares a *full model* $\Xmat_f$ with a *reduced model* $\Xmat_r$.
 
@@ -472,7 +479,7 @@ well as the two dummy columns for the UCB and MIT group means.
 $\Xmat_r$ is our original model, that only contains the dummy columns for the
 UCB and MIT group means.
 
-We define $SSR(\Xmat_r)$ and $SSR(\Xmat_f)$ as in :doc:`hypothesis_tests`.
+We define $SSR(\Xmat_r)$ and $SSR(\Xmat_f)$ as in `hypothesis tests`_.
 These are the Sums of Squares of the Residuals of the reduced and full model
 respectively.
 
@@ -487,7 +494,7 @@ respectively.
     SSR(\Xmat_f) = \hat\evec_f^T \hat\evec_f
 
 You can calculate the F statistic for adding the ``clammy`` regressor, by
-using these calculations and the formula for the F-test at :ref:`f-tests`.
+using these calculations and the formula for the F-test in `F tests`_.
 
 .. admonition:: Question
 
@@ -501,12 +508,12 @@ using these calculations and the formula for the F-test at :ref:`f-tests`.
 
     .. nbplot::
 
-        >>> # Reduced design, and design rank
+        >>> # Reduced design, and design matrix rank
         >>> X_r = X
         >>> rank_r = npl.matrix_rank(X_r)
         >>> rank_r
         2
-        >>> # Full design, and matrix rank
+        >>> # Full design, and design matrix rank
         >>> X_f = np.column_stack((clammy, X))
         >>> rank_f = npl.matrix_rank(X_f)
         >>> rank_f
