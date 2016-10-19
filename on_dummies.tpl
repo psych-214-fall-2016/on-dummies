@@ -390,15 +390,16 @@ inspiration:
  
 .. admonition:: Question
 
-    Now imagine your UCB and MIT are groups are not equal.  $n$ is constant,
-    the number of students. Call $b$ the number of Berkeley students in the
-    $n=10$, where $b \in [1, 2, ... 9]$.  Write the number of MIT students as
-    $n - b$.  Using your reasoning for the case of equal group sizes above,
-    derive a simple mathematical formula for the result of $\cvec^T (\Xmat^T
-    \Xmat)^{-1} \cvec$ in terms of $b$ and $n$. $\cvec$ is the contrast you
-    chose above.  If all other things remain equal, such as $n = 10$, the
-    $\hat{\sigma^2}$ and $\cvec^T \bhat$, then which of the possible values of
-    $b$ should you chose to give the largest value for your t statistic?
+    Now imagine your UCB and MIT groups are not of equal size.  The total
+    number of students $n$ has not changed. Call $b$ the number of Berkeley
+    students in the $n=10$, where $b \in [1, 2, ... 9]$.  Write the number of
+    MIT students as $n - b$.  Using your reasoning for the case of equal group
+    sizes above, derive a simple mathematical formula for the result of
+    $\cvec^T (\Xmat^T \Xmat)^{-1} \cvec$ in terms of $b$ and $n$. $\cvec$ is
+    the contrast you chose above.  If all other things remain equal, such as
+    $n = 10$, the $\hat{\sigma^2}$ and $\cvec^T \bhat$, then which of the
+    possible values of $b$ should you chose to give the largest value for your
+    t statistic?
 
 .. solution-start
 
@@ -439,16 +440,16 @@ inspiration:
 
 .. solution-replace-code
 
-    """ Now imagine your UCB and MIT are groups are not equal.  $n$ is
-    constant, the number of students. Call ``b`` the number of Berkeley
-    students in the ``n=10``, where ``b in range(1, 10)``.  Write the number
-    of MIT students as ``n - b``.  Using your reasoning from the  equal group
-    sizes above, derive a simple mathematical formula for the result of
-    ``c.dot(npl.inv(X.T.dot(X)).dot(c)`` in terms of ``b`` and ``n``. ``c`` is
-    the contrast vector you chose above.  If all other things remain equal,
-    such as the sigma estimate and the top half of the t statistic, then what
-    value of ``b`` should you chose to give the largest value for your t
-    statistic?
+    """ Now imagine your UCB and MIT groups are not of equal size.  The total
+    number of students ``n`` has not changed. Call ``b`` the number of
+    Berkeley students in the ``n=10``, where ``b in range(1, 10)``.  Write the
+    number of MIT students as ``n - b``.  Using your reasoning from the equal
+    group sizes case above, derive a simple mathematical formula for the
+    result of ``c.dot(npl.inv(X.T.dot(X)).dot(c)`` in terms of ``b`` and
+    ``n``. ``c`` is the contrast vector you chose above.  If all other things
+    remain equal, such as the sigma estimate and the top half of the t
+    statistic, then what value of ``b`` should you chose to give the largest
+    value for your t statistic?
     """
 
 .. solution-end
