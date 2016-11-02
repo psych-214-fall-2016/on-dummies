@@ -438,6 +438,24 @@ inspiration:
     In general, for a fixed $n$, we get the largest t statistic (and greatest
     power) when comparing two groups of equal size.
 
+    We can prove this result by doing some calculus.  Here we are using the
+    sympy_ Python package for computer algebra to show the results of the
+    differentiation and root finding:
+
+    .. nbplot::
+
+        >>> import sympy
+        >>> n, b = sympy.symbols('n, b')
+        >>> # construct the equation in terms of n and b
+        >>> eqn = 1 / b + 1 / (n - b)
+        >>> # differentiate with respect to b
+        >>> d_db = sympy.diff(eqn, b)
+        >>> d_db
+        (-b + n)**(-2) - 1/b**2
+        >>> # find values of b at which differential is 0.
+        >>> sympy.solve(d_db, b)
+        [n/2]
+
 .. solution-replace-code
 
     """ Now imagine your UCB and MIT groups are not of equal size.  The total
