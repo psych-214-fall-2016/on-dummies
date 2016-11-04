@@ -305,7 +305,7 @@ error* (see `unbiased variance estimate`_).
 
     >>> #- Calculate the degrees of freedom consumed by the design
     >>> m = npl.matrix_rank(X)
-    >>> #- Calculated the degrees of freedom of the error
+    >>> #- Calculate the degrees of freedom of the error
     >>> df_error = n - m
     >>> df_error
     8
@@ -327,7 +327,7 @@ pseudo-inverse.
 
 .. nbplot::
 
-    >>> #- Calculate c (X.T X) c.T
+    >>> #- Calculate c (X.T X)^-1 c.T
     >>> c_iXtX_ct = c.dot(npl.inv(X.T.dot(X))).dot(c)
     >>> c_iXtX_ct
     0.40000...
