@@ -357,8 +357,8 @@ pseudo-inverse.
 
 .. solution-replace-code
 
-    """ What is the relationship of ``c.dot(npl.inv(X.T.dot(X)).dot(cvec)`` to
-    ``p`` - the number of observations in each group?
+    """ What is the relationship of ``c.T (X.T.X)^-1 c`` to ``p`` - the number
+    of observations in each group?
     """
 
 .. solution-end
