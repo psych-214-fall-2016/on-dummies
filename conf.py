@@ -348,8 +348,10 @@ autorun_languages['octave_prefix_chars'] = 3
 # Add the 'copybutton' javascript, to hide/show the prompt in code
 # examples
 def setup(app):
-    app.add_javascript('copybutton.js')
+    app.add_js_file('copybutton.js')
 
 # Use local mathjax when environment variable IN_CUBA is set
 if os.environ.get('IN_CUBA'):
     mathjax_path="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+
+bibtex_bibfiles = ""
