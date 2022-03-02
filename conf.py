@@ -33,7 +33,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinxcontrib.bibtex',
     'sphinx.ext.doctest',
-    'nb2plots.nbplots',
+    'nb2plots',
     'texext.mathcode',
     'sphinx.ext.autodoc',
     'texext.math_dollar',
@@ -354,4 +354,4 @@ def setup(app):
 if os.environ.get('IN_CUBA'):
     mathjax_path="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
 
-bibtex_bibfiles = ""
+bibtex_bibfiles = []
